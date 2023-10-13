@@ -1,15 +1,18 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { SlOptionsVertical } from "react-icons/sl";
 import {
   PiArticle,
+  PiEqualsBold,
   PiLockSimple,
   PiTagSimple,
   PiUser,
   PiUserBold,
+  PiXBold,
 } from "react-icons/pi";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 type TNavItem = {
   name: string;
@@ -36,6 +39,7 @@ const NavItem = ({ name, icon, href, isActive }: TNavItem) => {
 };
 const Sidebar = () => {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const navItems: TNavItem[] = [
     {
       name: "Users",
@@ -64,20 +68,28 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="px-4 min-h-screen sticky top-8 border-r border-neutral-900">
-      <div className="flex flex-col items-start justify-between px-4 py-8 min-h-screen">
-        <div className="w-full">
-        <div className="mb-8">
-          <Image src={"/logo.png"} width={150} height={40} alt="company-logo" />
-        </div>
+    <div className="px-4 h-auto md:min-h-screen sticky top-8 border-r border-neutral-900">
+      <div className="flex flex-col items-start justify-between md:px-4 py-4 md:py-8 h-auto md:min-h-screen">
+        <div className="w-full flex flex-row md:flex-col justify-between md:justify-start items-center">
+          <div className="md:mb-8">
+            <Image
+              src={"/logo.png"}
+              width={150}
+              height={40}
+              alt="company-logo"
+            />
+          </div>
 
-        <div className="flex flex-col gap-y-4 w-full">
-          {navItems.map((item, index) => (
-            <NavItem key={index} {...item} />
-          ))}
+          <div className="hidden md:flex flex-col gap-y-4 w-full">
+            {navItems.map((item, index) => (
+              <NavItem key={index} {...item} />
+            ))}
+          </div>
+          <Button size={"icon"} onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <PiXBold /> : <PiEqualsBold />}
+          </Button>
         </div>
-        </div>
-        <div className="p-2 flex justify-between w-full items-center bg-neutral-700 rounded-md my-8">
+        <div className="hidden p-2 md:flex justify-between w-full items-center bg-neutral-700 rounded-md my-8">
           <div className="flex items-center gap-2">
             <Image
               src="https://ui-avatars.com/api/?name=elon&background=random"
@@ -96,6 +108,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
+      {isOpen && <h1>Hi</h1>}
     </div>
   );
 };
