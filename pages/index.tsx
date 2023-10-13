@@ -8,6 +8,9 @@ const Home = () => {
       <Link href="/auth/signin">
         <p>Go to Auth</p>
       </Link>
+      <Link href="/dashboard">
+        <p>Go to Dashboard</p>
+      </Link>
     </div>
   );
 };
