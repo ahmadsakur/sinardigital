@@ -46,19 +46,19 @@ const Sidebar = () => {
     {
       name: "Articles",
       icon: <PiArticle />,
-      href: "/dashboard/articles",
+      href: "#",
       isActive: router.pathname === "/dashboard/articles",
     },
     {
       name: "Category",
       icon: <PiTagSimple />,
-      href: "/dashboard/category",
+      href: "#",
       isActive: router.pathname === "/dashboard/category",
     },
     {
       name: "Roles",
       icon: <PiLockSimple />,
-      href: "/dashboard/roles",
+      href: "#",
       isActive: router.pathname === "/dashboard/roles",
     },
   ];
@@ -66,6 +66,7 @@ const Sidebar = () => {
   return (
     <div className="px-4 min-h-screen sticky top-8 border-r border-neutral-900">
       <div className="flex flex-col items-start justify-between px-4 py-8 min-h-screen">
+        <div className="w-full">
         <div className="mb-8">
           <Image src={"/logo.png"} width={150} height={40} alt="company-logo" />
         </div>
@@ -74,6 +75,7 @@ const Sidebar = () => {
           {navItems.map((item, index) => (
             <NavItem key={index} {...item} />
           ))}
+        </div>
         </div>
         <div className="p-2 flex justify-between w-full items-center bg-neutral-700 rounded-md my-8">
           <div className="flex items-center gap-2">
