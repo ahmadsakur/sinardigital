@@ -20,11 +20,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
-import { UserService } from "@/services/api-service";
+import { AuthService, RoleService, UserService } from "@/services/api-service";
 import { IDataResponse, UserRole } from "@/types/user";
 import { CreateModal } from "@/components/modal/CreateUserModal";
 import DeleteUserModal from "@/components/modal/DeleteUserModal";
 import { UpdateModal } from "@/components/modal/UpdateUserModal";
+import { useAuth } from "@/store/AuthContext";
+import { useRouter } from "next/router";
 
 const renderTag = (role: UserRole) => {
   return (
@@ -37,13 +39,16 @@ const renderTag = (role: UserRole) => {
     >{`${role.name}`}</span>
   );
 };
+
 const Dashboard = () => {
   const [limit, setLimit] = useState<string>("10");
   const [keyword, setKeyword] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [roles, setRoles] = useState<any>([]);
   const [tableData, setTableData] = useState<IDataResponse>();
+  const { token, isLoggedIn, changeUser, user } = useAuth();
   const debouncedValue = useDebounce<string>(keyword, 500);
-
+  const router = useRouter();
   const handleLimitChange = (value: string) => {
     setLimit(value);
     setPage(1);
@@ -61,15 +66,44 @@ const Dashboard = () => {
       page: page || 1,
     };
 
-    const token = localStorage?.getItem("access_token") || "";
+    if (!isLoggedIn) {
+      router.push("/auth/signin");
+    }
+
     const fetchUser = async () => {
-      const res = await UserService.getUsers(filter, token);
-      const { data } = await res.data;
-      setTableData(data);
+      if (token) {
+        const res = await UserService.getUsers(filter, token);
+        const { data } = await res.data;
+        setTableData(data);
+      }
     };
 
     fetchUser();
-  }, [debouncedValue, limit, page]);
+  }, [debouncedValue, limit, page, token]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (token) {
+        const res = await RoleService.getRoles(token);
+        const { data } = await res.data;
+        setRoles(data);
+      }
+    };
+
+    const fetchLoggedUser = async () => {
+      if (token) {
+        const res = await AuthService.getLoggedInUser(token);
+        const { data } = await res.data;
+        if (data) {
+          changeUser(data);
+        }
+      }
+    };
+
+    fetchRole();
+    fetchLoggedUser();
+  }, []);
+
   return (
     <>
       <Head>
@@ -80,7 +114,7 @@ const Dashboard = () => {
         <div className="w-full min-h-screen">
           <div className="flex flex-col md:flex-row items-start relative h-full">
             <div className="w-full md:w-3/12 lg:w-2/12 relative">
-              <Sidebar />
+              <Sidebar user={user!} />
             </div>
             <div className="flex flex-col items-start justify-start px-4 md:px-6 py-4 md:py-8 w-full md:w-9/12 lg:w-10/12">
               <div className="max-w-5xl w-full mx-auto">
@@ -115,7 +149,7 @@ const Dashboard = () => {
                       <SelectItem value="20">20</SelectItem>
                     </SelectContent>
                   </Select>
-                  <CreateModal />
+                  <CreateModal roles={roles} />
                 </div>
                 <div>
                   <Table>
@@ -132,26 +166,28 @@ const Dashboard = () => {
                         tableData?.docs?.map((user) => (
                           <TableRow key={user._id}>
                             <TableCell className="flex items-center gap-4">
-                                <img
-                                  src={user.avatar}
-                                  alt={user.name}
-                                  className="rounded-full w-10 h-10"
-                                />
-                                <div>
-                                  <p>{user.name}</p>
-                                  <p className="text-sm text-neutral-500">
-                                    {user.email}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell>{user?.role && renderTag(user.role)}</TableCell>
+                              <img
+                                src={user.avatar}
+                                alt={user.name}
+                                className="rounded-full w-10 h-10"
+                              />
+                              <div>
+                                <p>{user.name}</p>
+                                <p className="text-sm text-neutral-500">
+                                  {user.email}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {user?.role && renderTag(user.role)}
+                            </TableCell>
                             <TableCell className="max-w-[200px] whitespace-pre-wrap">
                               <p className="text-sm text-gray-300">
                                 {user.bio}
                               </p>
                             </TableCell>
                             <TableCell className="flex gap-2">
-                              <UpdateModal user={user} />
+                              <UpdateModal user={user} roles={roles} />
                               <DeleteUserModal user={user} />
                             </TableCell>
                           </TableRow>

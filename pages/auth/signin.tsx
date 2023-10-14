@@ -1,14 +1,23 @@
 import { AuthService } from "@/services/api-service";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { use, useEffect } from "react";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import { BiAt, BiLock } from "react-icons/bi";
+import { BiAt, BiCheckDouble, BiLock } from "react-icons/bi";
 import TextInput from "@/components/input/TextInput";
 import PasswordInput from "@/components/input/PasswordInput";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { PiCheckFill } from "react-icons/pi";
+import { useAuth } from "@/store/AuthContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -19,6 +28,14 @@ const LoginPage = () => {
     password: Yup.string().required("Password is required").min(8),
   });
 
+  const { changeToken, isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/dashboard");
+    }
+  }, [isLoggedIn, router]);
+
   const handleLogin = async (
     values: { email: string; password: string },
     { setErrors, setSubmitting }: any
@@ -27,7 +44,7 @@ const LoginPage = () => {
     try {
       const response = await AuthService.login(values);
       const { access_token } = response.data.data;
-      localStorage.setItem("access_token", access_token);
+      changeToken(access_token);
       router.push("/dashboard");
     } catch (error: any) {
       setErrors({ email: error.response.data.message });
@@ -43,9 +60,64 @@ const LoginPage = () => {
       </Head>
       <div className="mx-auto min-h-screen h-full">
         <div className="flex items-center h-full w-full">
-          <div className="bg-neutral-900 hidden md:w-1/2 lg:w-3/5 md:block min-h-screen relative bg-top bg-cover bg-no-repeat"></div>
+          <div
+            className="bg-neutral-900 hidden md:w-1/2 lg:w-3/5 md:block min-h-screen relative bg-top bg-cover bg-no-repeat"
+            style={{
+              backgroundImage:
+                "url('https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')",
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+            <div className="inset-0 absolute">
+              <div className="p-8 flex flex-col justify-between h-full">
+                <div>
+                  <Image
+                    src={"/logo.png"}
+                    width={150}
+                    height={40}
+                    alt="company-logo"
+                  />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold">
+                    Welcome to Sinar Digital CMS
+                  </h1>
+                  <p className="text-neutral-400 text-sm max-w-md py-2">
+                    Easyly manage your content with Sinar CMS
+                  </p>
+                  <div className="grid grid-cols-2 gap-4 py-4">
+                    <div className="flex gap-4 items-center">
+                      <BiCheckDouble className="text-green-500 text-2xl" />
+                      <p className="">Manage User</p>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <BiCheckDouble className="text-green-500 text-2xl" />
+                      <p className="">Manage Articles</p>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <BiCheckDouble className="text-green-500 text-2xl" />
+                      <p className="">Manage Categories</p>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <BiCheckDouble className="text-green-500 text-2xl" />
+                      <p className="">Roles and Permission</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="bg-black w-full md:w-1/2 lg:w-2/5 h-full min-h-screen px-4 md:px-6 lg:px-8 py-8 md:py-16">
             <div className="max-w-xs mx-auto">
+              <div className="md:hidden">
+                <Image
+                  src={"/logo.png"}
+                  width={150}
+                  height={40}
+                  alt="company-logo"
+                />
+              </div>
               <h1 className="text-4xl font-semibold text-left py-8">Log in</h1>
               <div className="w-full">
                 <Formik
@@ -86,6 +158,33 @@ const LoginPage = () => {
                     </Form>
                   )}
                 </Formik>
+              </div>
+              <div className="py-8 flex justify-center w-full">
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      size={"sm"}
+                      className="text-sm text-neutral-400 hover:text-neutral-300"
+                    >
+                      Readme
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogTitle>Project Description</DialogTitle>
+                    <p className="text-neutral-400 text-sm">
+                      This project is made using Next JS, TypeScript, Tailwind
+                      CSS with Authentication is managed with ContextAPI +
+                      localStorage
+                    </p>
+                    <p className="text-sm font-mono">
+                      &quot;I&apos;m aware that using localstorage to store jwt token
+                      can lead to security issue, but currently, this is the
+                      only strategies i can implement, due to time constraint
+                      and my current capabilities&quot;
+                    </p>
+                    
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </div>
