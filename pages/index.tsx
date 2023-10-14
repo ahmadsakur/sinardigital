@@ -1,18 +1,14 @@
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
 const Home = () => {
-  return (
-    <div>
-      <h3>Home</h3>
-      <Link href="/auth/signin">
-        <p>Go to Auth</p>
-      </Link>
-      <Link href="/dashboard">
-        <p>Go to Dashboard</p>
-      </Link>
-    </div>
-  );
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/auth/signin");
+  }, [router]);
+
+  return <></>;
 };
 
 export default Home;
