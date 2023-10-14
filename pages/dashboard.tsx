@@ -25,6 +25,7 @@ import { IDataResponse, UserRole } from "@/types/user";
 import { CreateModal } from "@/components/modal/CreateUserModal";
 import DeleteUserModal from "@/components/modal/DeleteUserModal";
 import { UpdateModal } from "@/components/modal/UpdateUserModal";
+import { useAuth } from "@/store/AuthContext";
 
 const renderTag = (role: UserRole) => {
   return (
@@ -43,7 +44,6 @@ const Dashboard = () => {
   const [page, setPage] = useState<number>(1);
   const [tableData, setTableData] = useState<IDataResponse>();
   const debouncedValue = useDebounce<string>(keyword, 500);
-
   const handleLimitChange = (value: string) => {
     setLimit(value);
     setPage(1);
@@ -132,19 +132,21 @@ const Dashboard = () => {
                         tableData?.docs?.map((user) => (
                           <TableRow key={user._id}>
                             <TableCell className="flex items-center gap-4">
-                                <img
-                                  src={user.avatar}
-                                  alt={user.name}
-                                  className="rounded-full w-10 h-10"
-                                />
-                                <div>
-                                  <p>{user.name}</p>
-                                  <p className="text-sm text-neutral-500">
-                                    {user.email}
-                                  </p>
-                                </div>
-                              </TableCell>
-                              <TableCell>{user?.role && renderTag(user.role)}</TableCell>
+                              <img
+                                src={user.avatar}
+                                alt={user.name}
+                                className="rounded-full w-10 h-10"
+                              />
+                              <div>
+                                <p>{user.name}</p>
+                                <p className="text-sm text-neutral-500">
+                                  {user.email}
+                                </p>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {user?.role && renderTag(user.role)}
+                            </TableCell>
                             <TableCell className="max-w-[200px] whitespace-pre-wrap">
                               <p className="text-sm text-gray-300">
                                 {user.bio}

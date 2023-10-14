@@ -47,7 +47,6 @@ export function UpdateModal({ user }: { user: User }) {
     setSelectedRole(value);
   };
 
-  console.log(selectedRole)
   useEffect(() => {
     const fetchRole = async () => {
       const res = await RoleService.getRoles(token);
