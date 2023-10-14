@@ -22,6 +22,8 @@ import { PiMagnifyingGlass, PiPen, PiPlus, PiTrash } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { UserService } from "@/services/api-service";
 import { IDataResponse } from "@/types/user";
+import Image from "next/image";
+import { CreateModal } from "@/components/modal/CreateUserModal";
 
 const Dashboard = () => {
   const [limit, setLimit] = useState<string>("10");
@@ -45,7 +47,7 @@ const Dashboard = () => {
       page: page || 1,
     };
 
-    const token = sessionStorage.getItem("access_token") || "";
+    const token = localStorage.getItem("access_token") || "";
     const fetchUser = async () => {
       const res = await UserService.getUsers(filter, token);
       const { data } = await res.data;
@@ -99,17 +101,15 @@ const Dashboard = () => {
                       <SelectItem value="20">20</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button className="flex items-center gap-2 py-2.5">
-                    <PiPlus />
-                  </Button>
+                  <CreateModal />
                 </div>
                 <div>
                   <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
                         <TableHead>Role</TableHead>
+                        <TableHead>Bio</TableHead>
                         <TableHead className="w-[100px]">Action</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -117,9 +117,24 @@ const Dashboard = () => {
                       {tableData?.docs && tableData.docs.length > 0 ? (
                         tableData?.docs?.map((user) => (
                           <TableRow key={user._id}>
-                            <TableCell>{user.name}</TableCell>
-                            <TableCell>{user.email}</TableCell>
+                            <TableCell className="flex items-center gap-4">
+                              <img
+                                src={user.avatar}
+                                
+                                alt={user.name}
+                                className="rounded-full w-10 h-10"
+                              />
+                              <div>
+                                <p>{user.name}</p>
+                                <p className="text-sm text-neutral-500">
+                                  {user.email}
+                                </p>
+                              </div>
+                            </TableCell>
                             <TableCell>admin</TableCell>
+                            <TableCell>
+                              <p className="text-sm text-gray-300">{user.bio}</p>
+                            </TableCell>
                             <TableCell className="flex gap-2">
                               <Button className="flex items-center gap-2 py-2.5">
                                 <PiPen />

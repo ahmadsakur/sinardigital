@@ -91,12 +91,11 @@ const Sidebar = () => {
         </div>
         <div className="hidden p-2 md:flex justify-between w-full items-center bg-neutral-700 rounded-md my-8">
           <div className="flex items-center gap-2">
-            <Image
-              src="https://ui-avatars.com/api/?name=elon&background=random"
+            <img
+              src="https://api.dicebear.com/7.x/thumbs/svg?seed=Felix"
               alt="Profile"
-              width={35}
-              height={35}
-              className="rounded-full"
+              
+              className="rounded-full w-8 h-8"
             />
             <div className="flex flex-col">
               <h3 className="text-sm font-semibold">Elon Musk</h3>

@@ -13,7 +13,7 @@ export const AuthService = {
 };
 
 export const UserService = {
-  getUsers: (filter: TUserFilter, token : string) => {
+  getUsers: (filter: TUserFilter, token: string) => {
     return apiClient.get("/users", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -24,8 +24,12 @@ export const UserService = {
   getUserById: (id: string) => {
     return apiClient.get(`/user/${id}`);
   },
-  createUser: (payload: TUserPayload) => {
-    return apiClient.post("/user", payload);
+  createUser: (payload: TUserPayload, token: string) => {
+    return apiClient.post("/users", payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
   updateUser: (id: string, payload: TUserPayload) => {
     return apiClient.patch(`/user/${id}`, payload);
@@ -35,5 +39,15 @@ export const UserService = {
   },
   updateUserPassword: (payload: TPatchPassword) => {
     return apiClient.patch("/user/password", payload);
+  },
+};
+
+export const RoleService = {
+  getRoles: (token: string) => {
+    return apiClient.get("/roles", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
 };

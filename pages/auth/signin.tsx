@@ -27,7 +27,7 @@ const LoginPage = () => {
     try {
       const response = await AuthService.login(values);
       const { access_token } = response.data.data;
-      sessionStorage.setItem("access_token", access_token);
+      localStorage.setItem("access_token", access_token);
       router.push("/dashboard");
     } catch (error: any) {
       setErrors({ email: error.response.data.message });
@@ -62,14 +62,14 @@ const LoginPage = () => {
                         name="email"
                         type="email"
                         label="Email Address"
-                        placeholder="masukkan email anda"
+                        placeholder="enter your email"
                         icon={<BiAt />}
                       />
                       <PasswordInput
                         id="password"
                         name="password"
                         label="Password"
-                        placeholder="masukkan password anda"
+                        placeholder="enter your password"
                         icon={<BiLock />}
                       />
                       <div className="flex flex-col gap-2 mt-4">
@@ -86,16 +86,6 @@ const LoginPage = () => {
                     </Form>
                   )}
                 </Formik>
-
-                {/* <p className="text-gray-500 text-xs py-2 text-left mx-auto">
-                  belum punya akun ? daftar{" "}
-                  <Link
-                    href={"/register"}
-                    className="text-blue-400 font-medium"
-                  >
-                    di sini.
-                  </Link>
-                </p> */}
               </div>
             </div>
           </div>

@@ -5,7 +5,31 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'ui-avatars.com',
+        hostname: 'api.dicebear.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.ibanez.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cloudflare-ipfs.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.genius.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'metalanarchydotcom.files.wordpress.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'vz.cnwimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.pixabay.com',
       },
     ],
   },

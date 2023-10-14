@@ -12,7 +12,12 @@ interface TextInputProps {
   value?: string | number;
   defaultValue?: string | number;
   ref?: React.Ref<HTMLInputElement>;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
+
+
+
 
 const TextInput: React.FC<TextInputProps> = ({ label, ...props }) => {
   const [field, meta] = useField(props);
@@ -36,6 +41,7 @@ const TextInput: React.FC<TextInputProps> = ({ label, ...props }) => {
           className={` bg-black border text-sm text-neutral-300 focus:border-neutral-200 rounded-lg px-4 focus:outline-none pl-10 py-2.5 w-full placeholder:text-neutral-600 placeholder:text-sm ${
             hasError ? "border-red-400" : "border-neutral-700"
           }`}
+          readOnly={props.readOnly}
         />
       </div>
       {hasError && (
