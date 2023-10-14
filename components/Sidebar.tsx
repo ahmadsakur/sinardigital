@@ -68,8 +68,8 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="px-4 h-auto md:min-h-screen sticky top-8 border-r border-neutral-900">
-      <div className="flex flex-col items-start justify-between md:px-4 py-4 md:py-8 h-auto md:min-h-screen">
+    <div className="px-4 sticky top-4 border-r border-neutral-900">
+      <div className="flex flex-col items-start justify-between md:px-4 py-4 md:py-8 h-full">
         <div className="w-full flex flex-row md:flex-col justify-between md:justify-start items-center">
           <div className="md:mb-8">
             <Image
@@ -85,7 +85,7 @@ const Sidebar = () => {
               <NavItem key={index} {...item} />
             ))}
           </div>
-          <Button size={"icon"} onClick={() => setIsOpen(!isOpen)}>
+          <Button className="flex md:hidden" size={"icon"} onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <PiXBold /> : <PiEqualsBold />}
           </Button>
         </div>
@@ -108,7 +108,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-      {isOpen && <h1>Hi</h1>}
+      {isOpen && <div className="block md:hiden">Hi</div>}
     </div>
   );
 };

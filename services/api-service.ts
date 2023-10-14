@@ -13,8 +13,13 @@ export const AuthService = {
 };
 
 export const UserService = {
-  getUsers: (filter : TUserFilter) => {
-    return apiClient.get("/user");
+  getUsers: (filter: TUserFilter, token : string) => {
+    return apiClient.get("/users", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: filter,
+    });
   },
   getUserById: (id: string) => {
     return apiClient.get(`/user/${id}`);
@@ -28,8 +33,7 @@ export const UserService = {
   deleteUser: (id: string) => {
     return apiClient.delete(`/user/${id}`);
   },
-  updateUserPassword: (payload : TPatchPassword) => {
-    return apiClient.patch('/user/password', payload)
-  }
-
+  updateUserPassword: (payload: TPatchPassword) => {
+    return apiClient.patch("/user/password", payload);
+  },
 };
