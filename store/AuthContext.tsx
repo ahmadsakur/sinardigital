@@ -51,7 +51,6 @@ export function AuthDataProvider({ children }: { children: React.ReactNode }) {
       decodedToken.exp * 1000 > Date.now()
         ? setIsLoggedIn(true)
         : setIsLoggedIn(false);
-      console.log(decodedToken.exp * 1000, Date.now());
     }
   }, [decodedToken]);
 

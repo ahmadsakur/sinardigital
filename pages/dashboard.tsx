@@ -58,9 +58,6 @@ const Dashboard = () => {
     setKeyword(value);
     setPage(1);
   };
-  useEffect(() => {
-    console.log(isLoggedIn);
-  }, [isLoggedIn]);
 
   useEffect(() => {
     const filter = {
@@ -69,11 +66,12 @@ const Dashboard = () => {
       page: page || 1,
     };
 
+    if (!isLoggedIn) {
+      router.push("/auth/signin");
+    }
+
     const fetchUser = async () => {
       if (token) {
-        if (!isLoggedIn) {
-          router.push("/auth/signin");
-        }
         const res = await UserService.getUsers(filter, token);
         const { data } = await res.data;
         setTableData(data);

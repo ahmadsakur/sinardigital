@@ -11,6 +11,13 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { PiCheckFill } from "react-icons/pi";
 import { useAuth } from "@/store/AuthContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -104,12 +111,12 @@ const LoginPage = () => {
           <div className="bg-black w-full md:w-1/2 lg:w-2/5 h-full min-h-screen px-4 md:px-6 lg:px-8 py-8 md:py-16">
             <div className="max-w-xs mx-auto">
               <div className="md:hidden">
-              <Image
-                src={"/logo.png"}
-                width={150}
-                height={40}
-                alt="company-logo"
-              />
+                <Image
+                  src={"/logo.png"}
+                  width={150}
+                  height={40}
+                  alt="company-logo"
+                />
               </div>
               <h1 className="text-4xl font-semibold text-left py-8">Log in</h1>
               <div className="w-full">
@@ -151,6 +158,33 @@ const LoginPage = () => {
                     </Form>
                   )}
                 </Formik>
+              </div>
+              <div className="py-8 flex justify-center w-full">
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      size={"sm"}
+                      className="text-sm text-neutral-400 hover:text-neutral-300"
+                    >
+                      Readme
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogTitle>Project Description</DialogTitle>
+                    <p className="text-neutral-400 text-sm">
+                      This project is made using Next JS, TypeScript, Tailwind
+                      CSS with Authentication is managed with ContextAPI +
+                      localStorage
+                    </p>
+                    <p className="text-sm font-mono">
+                      &quot;I&apos;m aware that using localstorage to store jwt token
+                      can lead to security issue, but currently, this is the
+                      only strategies i can implement, due to time constraint
+                      and my current capabilities&quot;
+                    </p>
+                    
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </div>

@@ -9,10 +9,18 @@ import {
   PiUser,
   PiXBold,
 } from "react-icons/pi";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { User } from "@/types/user";
+import { useAuth } from "@/store/AuthContext";
 
 type TNavItem = {
   name: string;
@@ -67,6 +75,15 @@ const Sidebar = ({ user }: { user: User }) => {
     },
   ];
 
+  const { changeIsLoggedIn, changeToken } = useAuth();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    changeIsLoggedIn(false);
+    changeToken("");
+    router.push("/auth/signin");
+  }
+
   return (
     <div className="px-4 sticky top-4 border-r border-neutral-900">
       <div className="flex flex-col items-start justify-between md:px-4 py-4 md:py-8 h-full">
@@ -85,15 +102,35 @@ const Sidebar = ({ user }: { user: User }) => {
               <NavItem key={index} {...item} />
             ))}
           </div>
-          <Button
-            className="flex md:hidden"
-            size={"icon"}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <PiXBold /> : <PiEqualsBold />}
-          </Button>
+          <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenuTrigger
+              onClick={() => setIsOpen(!isOpen)}
+              className="md:hidden bg-neutral-900 text-neutral-50 hover:bg-neutral-900/90 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-50/90 h-8 w-8 flex items-center justify-center rounded-sm"
+            >
+              {isOpen ? <PiXBold /> : <PiEqualsBold />}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {navItems.map((item, index) => (
+                <DropdownMenuItem key={index}>
+                  <div
+                    className={`flex gap-2 items-center ${
+                      item.isActive ? "text-white" : "text-neutral-400"
+                    }`}
+                  >
+                    <div>{item.icon}</div>
+                    <p className="text-sm">{item.name}</p>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator className="bg-neutral-700" />
+              <DropdownMenuItem className="flex items-center gap-2">
+                <PiXBold />
+                <p className="text-red-500">Logout</p>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <div className="hidden p-2 md:flex justify-between w-full items-center bg-neutral-700 rounded-md my-8">
+        <div className="hidden px-4 py-2 md:flex justify-between w-full items-center bg-neutral-900 rounded-md my-8">
           <div className="flex items-center gap-2">
             <img
               src={user?.avatar}
@@ -108,11 +145,20 @@ const Sidebar = ({ user }: { user: User }) => {
             </div>
           </div>
           <div className="cursor-pointer">
-            <SlOptionsVertical />
+            <DropdownMenu >
+              <DropdownMenuTrigger>
+                <SlOptionsVertical />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem className="flex items-center gap-2" onClick={handleLogout}>
+                  <PiXBold />
+                  <p className="text-red-500">Logout</p>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
-      {isOpen && <div className="block md:hiden">Hi</div>}
     </div>
   );
 };
