@@ -18,12 +18,13 @@ import {
 } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { PiMagnifyingGlass, PiPen, PiPlus, PiTrash } from "react-icons/pi";
+import { PiMagnifyingGlass } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { UserService } from "@/services/api-service";
 import { IDataResponse } from "@/types/user";
 import { CreateModal } from "@/components/modal/CreateUserModal";
 import DeleteUserModal from "@/components/modal/DeleteUserModal";
+import { UpdateModal } from "@/components/modal/UpdateUserModal";
 
 const Dashboard = () => {
   const [limit, setLimit] = useState<string>("10");
@@ -49,7 +50,7 @@ const Dashboard = () => {
       page: page || 1,
     };
 
-    const token = localStorage.getItem("access_token") || "";
+    const token = localStorage?.getItem("access_token") || "";
     const fetchUser = async () => {
       const res = await UserService.getUsers(filter, token);
       const { data } = await res.data;
@@ -133,14 +134,12 @@ const Dashboard = () => {
                                 </p>
                               </div>
                             </TableCell>
-                            <TableCell>admin</TableCell>
+                            <TableCell>{user.role?.name}</TableCell>
                             <TableCell>
                               <p className="text-sm text-gray-300">{user.bio}</p>
                             </TableCell>
                             <TableCell className="flex gap-2">
-                              <Button className="flex items-center gap-2 py-2.5">
-                                <PiPen />
-                              </Button>
+                              <UpdateModal user={user} />
                               <DeleteUserModal user={user} />
                             </TableCell>
                           </TableRow>

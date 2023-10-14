@@ -6,12 +6,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
-import { PiPlus } from "react-icons/pi";
+import { PiPen } from "react-icons/pi";
 import TextInput from "../input/TextInput";
-import PasswordInput from "../input/PasswordInput";
-import { BiAt, BiFont, BiInfoCircle, BiLock, BiUser } from "react-icons/bi";
+import { BiAt, BiFont, BiInfoCircle, BiUser } from "react-icons/bi";
 import { useEffect, useState } from "react";
 import {
   Select,
@@ -22,26 +21,25 @@ import {
 } from "@/components/ui/select";
 import { RoleService, UserService } from "@/services/api-service";
 import toast from "react-hot-toast";
+import { User } from "@/types/user";
 
-type CreateUserPayload = {
+type UpdateUserPayload = {
   name: string;
   email: string;
-  password: string;
   bio: string;
   avatar?: string;
   roleId?: string;
 };
-export function CreateModal() {
+export function UpdateModal({ user }: { user: User }) {
   const [isOpen, setIsOpen] = useState(false);
   const [roles, setRoles] = useState([]);
-  const [selectedRole, setSelectedRole] = useState("");
-
+  const [selectedRole, setSelectedRole] = useState<any>(user.role?._id);
+  const token = localStorage?.getItem("access_token") || "";
   const createUserSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
       .email("Invalid email address")
       .required("Email is required"),
-    password: Yup.string().required("Password is required").min(8),
     bio: Yup.string().required("Bio is required"),
   });
 
@@ -49,9 +47,9 @@ export function CreateModal() {
     setSelectedRole(value);
   };
 
+  console.log(selectedRole)
   useEffect(() => {
     const fetchRole = async () => {
-      const token = localStorage?.getItem("access_token") || "";
       const res = await RoleService.getRoles(token);
       const { data } = await res.data;
       setRoles(data);
@@ -61,23 +59,23 @@ export function CreateModal() {
   }, []);
 
   const handleCreateUser = async (
-    values: CreateUserPayload,
+    values: UpdateUserPayload,
     { setErrors, setSubmitting }: any
   ) => {
     setSubmitting(true);
     const generatedAvatarUrl = `https://ui-avatars.com/api/?name=${values.name}&background=random`;
     const payload = {
+      id: user._id,
       ...values,
       roleId: selectedRole,
       avatar: generatedAvatarUrl,
     };
-    const token = localStorage?.getItem("access_token") || "";
 
     try {
-      const res = await UserService.createUser(payload, token);
+      const res = await UserService.updateUser(payload, token);
       const { data } = await res.data;
       if (data) {
-        toast.success("User created successfully");
+        toast.success("User updated successfully");
         setIsOpen(false);
       }
     } catch (error: any) {
@@ -91,7 +89,7 @@ export function CreateModal() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="default">
-          <PiPlus />
+          <PiPen />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -101,11 +99,10 @@ export function CreateModal() {
         <div>
           <Formik
             initialValues={{
-              name: "",
-              email: "",
-              password: "",
-              bio: "",
-              avatar: "",
+              name: user.name,
+              email: user.email,
+              bio: user.bio,
+              avatar: user.avatar,
             }}
             validationSchema={createUserSchema}
             onSubmit={(values, { setSubmitting, setErrors }) => {
@@ -130,13 +127,7 @@ export function CreateModal() {
                   placeholder="enter your email"
                   icon={<BiAt />}
                 />
-                <PasswordInput
-                  id="password"
-                  name="password"
-                  label="Password"
-                  placeholder="****"
-                  icon={<BiLock />}
-                />
+                
                 <TextInput
                   id="bio"
                   name="bio"
@@ -152,8 +143,7 @@ export function CreateModal() {
                       name="avatar"
                       type="text"
                       label="Avatar"
-                      placeholder="autofilled with ui-avatar API"
-                      readOnly={true}
+                      placeholder="enter your avatar url"
                       icon={<BiUser />}
                     />
                   </div>
@@ -168,6 +158,7 @@ export function CreateModal() {
                       <Select
                         name="roleId"
                         value={selectedRole}
+                        defaultValue={selectedRole}
                         onValueChange={handleRoleChange}
                       >
                         <SelectTrigger className="w-full">
@@ -191,7 +182,7 @@ export function CreateModal() {
                   }`}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Loading..." : "Create"}
+                  {isSubmitting ? "Loading..." : "Update"}
                 </button>
               </Form>
             )}

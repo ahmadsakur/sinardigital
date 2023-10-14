@@ -14,6 +14,14 @@ export type TUserPayload = {
   roleId: string;
 };
 
+export type TPatchUserPayload = {
+  name?: string;
+  email?: string;
+  bio?: string;
+  avatar?: string;
+  roleId?: string;
+};
+
 export type TPatchPassword = {
   id: string;
   password: string;

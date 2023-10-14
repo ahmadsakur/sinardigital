@@ -1,5 +1,10 @@
 import { TLoginCredentials } from "@/types/auth";
-import { TUserPayload, TUserFilter, TPatchPassword } from "@/types/user";
+import {
+  TUserPayload,
+  TUserFilter,
+  TPatchPassword,
+  TPatchUserPayload,
+} from "@/types/user";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -31,8 +36,12 @@ export const UserService = {
       },
     });
   },
-  updateUser: (id: string, payload: TUserPayload) => {
-    return apiClient.patch(`/user/${id}`, payload);
+  updateUser: (payload: TPatchUserPayload, token: string) => {
+    return apiClient.patch(`/users`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
   deleteUser: (id: string, token: string) => {
     return apiClient.delete(`/users/${id}`, {
