@@ -21,11 +21,22 @@ import { Button } from "@/components/ui/button";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { UserService } from "@/services/api-service";
-import { IDataResponse } from "@/types/user";
+import { IDataResponse, UserRole } from "@/types/user";
 import { CreateModal } from "@/components/modal/CreateUserModal";
 import DeleteUserModal from "@/components/modal/DeleteUserModal";
 import { UpdateModal } from "@/components/modal/UpdateUserModal";
 
+const renderTag = (role: UserRole) => {
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+        role.name === "admin"
+          ? "bg-green-100 text-green-800"
+          : "bg-yellow-100 text-yellow-800"
+      }`}
+    >{`${role.name}`}</span>
+  );
+};
 const Dashboard = () => {
   const [limit, setLimit] = useState<string>("10");
   const [keyword, setKeyword] = useState<string>("");
@@ -121,22 +132,23 @@ const Dashboard = () => {
                         tableData?.docs?.map((user) => (
                           <TableRow key={user._id}>
                             <TableCell className="flex items-center gap-4">
-                              <img
-                                src={user.avatar}
-                                
-                                alt={user.name}
-                                className="rounded-full w-10 h-10"
-                              />
-                              <div>
-                                <p>{user.name}</p>
-                                <p className="text-sm text-neutral-500">
-                                  {user.email}
-                                </p>
-                              </div>
-                            </TableCell>
-                            <TableCell>{user.role?.name}</TableCell>
-                            <TableCell>
-                              <p className="text-sm text-gray-300">{user.bio}</p>
+                                <img
+                                  src={user.avatar}
+                                  alt={user.name}
+                                  className="rounded-full w-10 h-10"
+                                />
+                                <div>
+                                  <p>{user.name}</p>
+                                  <p className="text-sm text-neutral-500">
+                                    {user.email}
+                                  </p>
+                                </div>
+                              </TableCell>
+                              <TableCell>{user?.role && renderTag(user.role)}</TableCell>
+                            <TableCell className="max-w-[200px] whitespace-pre-wrap">
+                              <p className="text-sm text-gray-300">
+                                {user.bio}
+                              </p>
                             </TableCell>
                             <TableCell className="flex gap-2">
                               <UpdateModal user={user} />
@@ -153,7 +165,7 @@ const Dashboard = () => {
                       )}
                     </TableBody>
                   </Table>
-                  <div className="flex justify-end w-full items-center gap-2">
+                  <div className="flex justify-end w-full items-center gap-2 py-4 mb-16">
                     {tableData?.hasPrevPage && (
                       <Button
                         className="flex items-center gap-2 py-2.5"

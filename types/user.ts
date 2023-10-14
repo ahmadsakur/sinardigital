@@ -39,7 +39,7 @@ export interface User {
   bio: string;
 }
 
-interface UserRole {
+export interface UserRole {
   _id: string;
   name: string;
   permissions: string[];
