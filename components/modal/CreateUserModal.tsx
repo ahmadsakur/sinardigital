@@ -20,8 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RoleService, UserService } from "@/services/api-service";
+import { UserService } from "@/services/api-service";
 import toast from "react-hot-toast";
+import { UserRole } from "@/types/user";
 
 type CreateUserPayload = {
   name: string;
@@ -31,9 +32,8 @@ type CreateUserPayload = {
   avatar?: string;
   roleId?: string;
 };
-export function CreateModal() {
+export function CreateModal({ roles }: { roles: UserRole[] }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [roles, setRoles] = useState([]);
   const [selectedRole, setSelectedRole] = useState("");
 
   const createUserSchema = Yup.object({
@@ -48,17 +48,6 @@ export function CreateModal() {
   const handleRoleChange = (value: string) => {
     setSelectedRole(value);
   };
-
-  useEffect(() => {
-    const fetchRole = async () => {
-      const token = localStorage?.getItem("access_token") || "";
-      const res = await RoleService.getRoles(token);
-      const { data } = await res.data;
-      setRoles(data);
-    };
-
-    fetchRole();
-  }, []);
 
   const handleCreateUser = async (
     values: CreateUserPayload,

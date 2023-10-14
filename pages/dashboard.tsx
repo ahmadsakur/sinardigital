@@ -20,12 +20,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
-import { UserService } from "@/services/api-service";
+import { RoleService, UserService } from "@/services/api-service";
 import { IDataResponse, UserRole } from "@/types/user";
 import { CreateModal } from "@/components/modal/CreateUserModal";
 import DeleteUserModal from "@/components/modal/DeleteUserModal";
 import { UpdateModal } from "@/components/modal/UpdateUserModal";
 import { useAuth } from "@/store/AuthContext";
+import { useRouter } from "next/router";
 
 const renderTag = (role: UserRole) => {
   return (
@@ -38,12 +39,16 @@ const renderTag = (role: UserRole) => {
     >{`${role.name}`}</span>
   );
 };
+
 const Dashboard = () => {
   const [limit, setLimit] = useState<string>("10");
   const [keyword, setKeyword] = useState<string>("");
   const [page, setPage] = useState<number>(1);
+  const [roles, setRoles] = useState<any>([]);
   const [tableData, setTableData] = useState<IDataResponse>();
+  const { token, isLoggedIn } = useAuth();
   const debouncedValue = useDebounce<string>(keyword, 500);
+  const router = useRouter();
   const handleLimitChange = (value: string) => {
     setLimit(value);
     setPage(1);
@@ -53,7 +58,10 @@ const Dashboard = () => {
     setKeyword(value);
     setPage(1);
   };
-
+  useEffect(() => {
+    console.log(isLoggedIn);
+  }, [isLoggedIn]);
+  
   useEffect(() => {
     const filter = {
       limit: parseInt(limit),
@@ -61,15 +69,32 @@ const Dashboard = () => {
       page: page || 1,
     };
 
-    const token = localStorage?.getItem("access_token") || "";
     const fetchUser = async () => {
-      const res = await UserService.getUsers(filter, token);
-      const { data } = await res.data;
-      setTableData(data);
+      if (token) {
+        if(!isLoggedIn) {
+          router.push('/auth/signin')
+        };
+        const res = await UserService.getUsers(filter, token);
+        const { data } = await res.data;
+        setTableData(data);
+      }
     };
 
     fetchUser();
-  }, [debouncedValue, limit, page]);
+  }, [debouncedValue, limit, page, token]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (token) {
+        const res = await RoleService.getRoles(token);
+        const { data } = await res.data;
+        setRoles(data);
+      }
+    };
+
+    fetchRole();
+  }, []);
+
   return (
     <>
       <Head>
@@ -115,7 +140,7 @@ const Dashboard = () => {
                       <SelectItem value="20">20</SelectItem>
                     </SelectContent>
                   </Select>
-                  <CreateModal />
+                  <CreateModal roles={roles} />
                 </div>
                 <div>
                   <Table>
@@ -153,7 +178,7 @@ const Dashboard = () => {
                               </p>
                             </TableCell>
                             <TableCell className="flex gap-2">
-                              <UpdateModal user={user} />
+                              <UpdateModal user={user} roles={roles} />
                               <DeleteUserModal user={user} />
                             </TableCell>
                           </TableRow>

@@ -1,7 +1,7 @@
 import { AuthService } from "@/services/api-service";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { use, useEffect } from "react";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { BiAt, BiCheckDouble, BiLock } from "react-icons/bi";
@@ -10,6 +10,7 @@ import PasswordInput from "@/components/input/PasswordInput";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { PiCheckFill } from "react-icons/pi";
+import { useAuth } from "@/store/AuthContext";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -20,6 +21,14 @@ const LoginPage = () => {
     password: Yup.string().required("Password is required").min(8),
   });
 
+  const { changeToken, isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push("/dashboard");
+    }
+  }, [isLoggedIn, router]);
+
   const handleLogin = async (
     values: { email: string; password: string },
     { setErrors, setSubmitting }: any
@@ -28,7 +37,7 @@ const LoginPage = () => {
     try {
       const response = await AuthService.login(values);
       const { access_token } = response.data.data;
-      localStorage.setItem("access_token", access_token);
+      changeToken(access_token);
       router.push("/dashboard");
     } catch (error: any) {
       setErrors({ email: error.response.data.message });
