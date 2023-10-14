@@ -7,12 +7,12 @@ import {
   PiLockSimple,
   PiTagSimple,
   PiUser,
-  PiUserBold,
   PiXBold,
 } from "react-icons/pi";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { User } from "@/types/user";
 
 type TNavItem = {
   name: string;
@@ -37,7 +37,7 @@ const NavItem = ({ name, icon, href, isActive }: TNavItem) => {
     </div>
   );
 };
-const Sidebar = () => {
+const Sidebar = ({ user }: { user: User }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const navItems: TNavItem[] = [
@@ -85,21 +85,26 @@ const Sidebar = () => {
               <NavItem key={index} {...item} />
             ))}
           </div>
-          <Button className="flex md:hidden" size={"icon"} onClick={() => setIsOpen(!isOpen)}>
+          <Button
+            className="flex md:hidden"
+            size={"icon"}
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <PiXBold /> : <PiEqualsBold />}
           </Button>
         </div>
         <div className="hidden p-2 md:flex justify-between w-full items-center bg-neutral-700 rounded-md my-8">
           <div className="flex items-center gap-2">
             <img
-              src="https://api.dicebear.com/7.x/thumbs/svg?seed=Felix"
+              src={user?.avatar}
               alt="Profile"
-              
               className="rounded-full w-8 h-8"
             />
             <div className="flex flex-col">
-              <h3 className="text-sm font-semibold">Elon Musk</h3>
-              <p className="text-xs text-neutral-300">Administrator</p>
+              <h3 className="text-sm font-semibold">{user?.name || "Ahmad"}</h3>
+              <p className="text-xs text-neutral-300">
+                {user?.role?.name || "Admin"}
+              </p>
             </div>
           </div>
           <div className="cursor-pointer">

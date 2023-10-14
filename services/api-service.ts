@@ -15,6 +15,20 @@ export const AuthService = {
   login: (credentials: TLoginCredentials) => {
     return apiClient.post("/auth/login", credentials);
   },
+  getLoggedInUser: (token: string) => {
+    return apiClient.get("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+  logout : (token: string) => {
+    return apiClient.post("/auth/logout", {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
 };
 
 export const UserService = {

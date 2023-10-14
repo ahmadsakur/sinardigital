@@ -20,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { PiMagnifyingGlass } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
-import { RoleService, UserService } from "@/services/api-service";
+import { AuthService, RoleService, UserService } from "@/services/api-service";
 import { IDataResponse, UserRole } from "@/types/user";
 import { CreateModal } from "@/components/modal/CreateUserModal";
 import DeleteUserModal from "@/components/modal/DeleteUserModal";
@@ -46,7 +46,7 @@ const Dashboard = () => {
   const [page, setPage] = useState<number>(1);
   const [roles, setRoles] = useState<any>([]);
   const [tableData, setTableData] = useState<IDataResponse>();
-  const { token, isLoggedIn } = useAuth();
+  const { token, isLoggedIn, changeUser, user } = useAuth();
   const debouncedValue = useDebounce<string>(keyword, 500);
   const router = useRouter();
   const handleLimitChange = (value: string) => {
@@ -61,7 +61,7 @@ const Dashboard = () => {
   useEffect(() => {
     console.log(isLoggedIn);
   }, [isLoggedIn]);
-  
+
   useEffect(() => {
     const filter = {
       limit: parseInt(limit),
@@ -71,9 +71,9 @@ const Dashboard = () => {
 
     const fetchUser = async () => {
       if (token) {
-        if(!isLoggedIn) {
-          router.push('/auth/signin')
-        };
+        if (!isLoggedIn) {
+          router.push("/auth/signin");
+        }
         const res = await UserService.getUsers(filter, token);
         const { data } = await res.data;
         setTableData(data);
@@ -92,7 +92,18 @@ const Dashboard = () => {
       }
     };
 
+    const fetchLoggedUser = async () => {
+      if (token) {
+        const res = await AuthService.getLoggedInUser(token);
+        const { data } = await res.data;
+        if (data) {
+          changeUser(data);
+        }
+      }
+    };
+
     fetchRole();
+    fetchLoggedUser();
   }, []);
 
   return (
@@ -105,7 +116,7 @@ const Dashboard = () => {
         <div className="w-full min-h-screen">
           <div className="flex flex-col md:flex-row items-start relative h-full">
             <div className="w-full md:w-3/12 lg:w-2/12 relative">
-              <Sidebar />
+              <Sidebar user={user!} />
             </div>
             <div className="flex flex-col items-start justify-start px-4 md:px-6 py-4 md:py-8 w-full md:w-9/12 lg:w-10/12">
               <div className="max-w-5xl w-full mx-auto">
