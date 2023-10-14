@@ -22,8 +22,8 @@ import { PiMagnifyingGlass, PiPen, PiPlus, PiTrash } from "react-icons/pi";
 import { useDebounce } from "@/hooks/useDebounce";
 import { UserService } from "@/services/api-service";
 import { IDataResponse } from "@/types/user";
-import Image from "next/image";
 import { CreateModal } from "@/components/modal/CreateUserModal";
+import DeleteUserModal from "@/components/modal/DeleteUserModal";
 
 const Dashboard = () => {
   const [limit, setLimit] = useState<string>("10");
@@ -34,10 +34,12 @@ const Dashboard = () => {
 
   const handleLimitChange = (value: string) => {
     setLimit(value);
+    setPage(1);
   };
 
   const handleKeywordChange = (value: string) => {
     setKeyword(value);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -139,9 +141,7 @@ const Dashboard = () => {
                               <Button className="flex items-center gap-2 py-2.5">
                                 <PiPen />
                               </Button>
-                              <Button className="flex items-center gap-2 py-2.5">
-                                <PiTrash />
-                              </Button>
+                              <DeleteUserModal user={user} />
                             </TableCell>
                           </TableRow>
                         ))

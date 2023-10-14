@@ -34,8 +34,12 @@ export const UserService = {
   updateUser: (id: string, payload: TUserPayload) => {
     return apiClient.patch(`/user/${id}`, payload);
   },
-  deleteUser: (id: string) => {
-    return apiClient.delete(`/user/${id}`);
+  deleteUser: (id: string, token: string) => {
+    return apiClient.delete(`/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
   updateUserPassword: (payload: TPatchPassword) => {
     return apiClient.patch("/user/password", payload);
